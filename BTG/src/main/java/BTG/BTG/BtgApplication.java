@@ -1,10 +1,11 @@
 package BTG.BTG;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import model.OderItemModel;
-import model.OderModel;
+import model.OrderItemModel;
+import model.OrderModel;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import repository.OderRepository;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @SpringBootApplication
 @EnableMongoRepositories(basePackages = "repository")
+@EnableRabbit
 public class BtgApplication {
 
     public static void main(String[] args) {
@@ -25,13 +27,13 @@ public class BtgApplication {
     @Bean
     CommandLineRunner initData(OderRepository repo) {
         return args -> {
-            OderItemModel item = OderItemModel.builder()
+            OrderItemModel item = OrderItemModel.builder()
                     .product("Produto Exemplo")
                     .quantity(2)
                     .price(new BigDecimal("59.90"))
                     .build();
 
-            OderModel order = OderModel.builder()
+            OrderModel order = OrderModel.builder()
                     .oderId(1L)
                     .customerId(100L)
                     .total(new BigDecimal("119.80"))

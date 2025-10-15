@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @Getter
 @Document(collection = "tb_orders")
-public class OderModel {
+public class OrderModel {
 
     @MongoId
     private Long oderId;
@@ -28,5 +28,5 @@ public class OderModel {
     @Field(targetType = FieldType.DECIMAL128)
     private BigDecimal total;
 
-    private List<OderItemModel> items;
+    private List<OrderItemModel> items;
 }
