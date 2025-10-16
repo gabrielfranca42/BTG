@@ -2,7 +2,7 @@ package dto;
 
 import java.util.List;
 
-public record OrderCreatedEventDto(Long codigoPedido,
-                                   Long codigoCliente,
-                                   List<OrderItemEventDto> items) {
+public record OrderCreatedEvent(Long codigoPedido,
+                                Long codigoCliente,
+                                List<OrderItemEvent> items) {
 }
