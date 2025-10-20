@@ -2,7 +2,7 @@ package btg.service;
 
 
 import btg.controller.dto.OrderResponse;
-import btg.listener.OrderCreatedEvent;
+import btg.listener.OrderCreatedListener;
 import btg.model.OrderItemModel;
 import btg.model.OrderModel;
 import btg.repository.OrderRepository;
@@ -31,7 +31,7 @@ public class OrderService {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void save(OrderCreatedEvent event){
+    public void save(OrderCreatedListener event){
 
         var model = new OrderModel();
 
@@ -61,7 +61,7 @@ public class OrderService {
         return new BigDecimal(response.getUniqueMappedResult().get("total").toString());
     }
 
-    private BigDecimal getTotal(OrderCreatedEvent event) {
+    private BigDecimal getTotal(OrderCreatedListener event) {
         return event.itens()
                 .stream()
                 .map(i -> i.preco().multiply(BigDecimal.valueOf(i.quantidade())))
@@ -70,7 +70,7 @@ public class OrderService {
     }
 
 
-    private static List<OrderItemModel> getOrderItems(OrderCreatedEvent event) {
+    private static List<OrderItemModel> getOrderItems(OrderCreatedListener event) {
         return event.itens().stream()
                 .map(i -> new OrderItemModel(i.produto(), i.quantidade(), i.preco()))
                 .toList();
