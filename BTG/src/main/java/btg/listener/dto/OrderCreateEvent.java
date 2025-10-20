@@ -1,4 +1,8 @@
 package btg.listener.dto;
 
-public record OrderCreateEvent() {
+import java.util.List;
+
+public record OrderCreateEvent(Long codigoPedido,
+                               Long codigoCliente,
+                               List<OrderItemEvent> itens) {
 }
