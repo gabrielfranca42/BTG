@@ -3,6 +3,7 @@ package btg.controller;
 
 import btg.controller.dto.ApiResponse;
 import btg.controller.dto.OrderResponse;
+import btg.controller.dto.PaginationResponse;
 import btg.service.OrderService;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +30,8 @@ public class OrderController {
                                                                 @RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                 @RequestParam(name = "pageSize" , defaultValue = "10") Integer pageSize{
 
-        var pageResponse = orderService.findAllByCustomerId(custpmerId, PageRequest.of(page, pageSize));
-        var totalOnders = orderService.findTotalOnOrdersByCustomerId(customerId);
+        var pageResponse = orderService.findAllByCustomerId(customerId, PageRequest.of(page, pageSize));
+        var totalOnOrders = orderService.findTotalOnOrdersByCustomerId(customerId);
 
 
         return ResponseEntity.ok(new ApiResponse<>(

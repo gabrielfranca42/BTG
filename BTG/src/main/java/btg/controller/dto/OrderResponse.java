@@ -9,6 +9,6 @@ public record OrderResponse(Long orderId,
                             BigDecimal total) {
 
     public static OrderResponse fromModel(OrderModel model){
-        return new OrderResponse(model.getOderId(), model.getCustomerId(), model.getTotal());
+        return new OrderResponse(model.getOrderId(), model.getCustomerId(), model.getTotal());
     }
 }
