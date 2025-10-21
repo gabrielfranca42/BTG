@@ -1,8 +1,8 @@
 package btg.service;
 
 import btg.controller.dto.OrderResponse;
+import btg.listener.OrderCreatedListener;
 import btg.listener.dto.OrderCreatedEvent;
-import btg.listener.dto.OrderItemEvent;
 import btg.model.OrderItemModel;
 import btg.model.OrderModel;
 import btg.repository.OrderRepository;
@@ -32,16 +32,16 @@ public class OrderService {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void save(OrderCreatedEvent event) {
+    public void save(OrderCreatedListener event) {
 
-        var entity = new OrderModel();
+        var model = new OrderModel();
 
-        entity.setOrderId(event.codigoPedido());
-        entity.setCustomerId(event.codigoCliente());
-        entity.setItems(getOrderItems(event));
-        entity.setTotal(getTotal(event));
+        model.setOrderId(event.codigoPedido());
+        model.setCustomerId(event.codigoCliente());
+        model.setItems(getOrderItems(event));
+        model.setTotal(getTotal(event));
 
-        orderRepository.save(entity);
+        orderRepository.save(model);
 
     }
 
