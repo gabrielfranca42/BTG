@@ -1,8 +1,8 @@
 package btg.service;
 
-
 import btg.controller.dto.OrderResponse;
-import btg.listener.OrderCreatedListener;
+import btg.listener.dto.OrderCreatedEvent;
+import btg.listener.dto.OrderItemEvent;
 import btg.model.OrderItemModel;
 import btg.model.OrderModel;
 import btg.repository.OrderRepository;
@@ -13,11 +13,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
+
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-
 
 @Service
 public class OrderService {
@@ -26,31 +27,31 @@ public class OrderService {
     private final MongoTemplate mongoTemplate;
 
     public OrderService(OrderRepository orderRepository,
-                        MongoTemplate mongoTemplate){
+                        MongoTemplate mongoTemplate) {
         this.orderRepository = orderRepository;
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void save(OrderCreatedListener event){
+    public void save(OrderCreatedEvent event) {
 
-        var model = new OrderModel();
+        var entity = new OrderModel();
 
-        model.setOrderId(event.codigoPedido());
-        model.setCustomerId(event.codigoCliente());
-        model.setItems(getOrdersitems(event));
-        model.setTotal(getTotal(event));
+        entity.setOrderId(event.codigoPedido());
+        entity.setCustomerId(event.codigoCliente());
+        entity.setItems(getOrderItems(event));
+        entity.setTotal(getTotal(event));
 
-        orderRepository.save(model);
+        orderRepository.save(entity);
+
     }
 
-
-    public Page<OrderResponse> findAllbyCustomer(Long customerId, PageRequest pageRequest){
+    public Page<OrderResponse> findAllByCustomerId(Long customerId, PageRequest pageRequest) {
         var orders = orderRepository.findAllByCustomerId(customerId, pageRequest);
 
         return orders.map(OrderResponse::fromModel);
     }
 
-    public BigDecimal findTotalOnOrdersByCustomerId(Long customerId){
+    public BigDecimal findTotalOnOrdersByCustomerId(Long customerId) {
         var aggregations = newAggregation(
                 match(Criteria.where("customerId").is(customerId)),
                 group().sum("total").as("total")
@@ -61,20 +62,17 @@ public class OrderService {
         return new BigDecimal(response.getUniqueMappedResult().get("total").toString());
     }
 
-    private BigDecimal getTotal(OrderCreatedListener event) {
-        return event.itens()
+    private BigDecimal getTotal(OrderCreatedEvent event) {
+        return event.items()
                 .stream()
                 .map(i -> i.preco().multiply(BigDecimal.valueOf(i.quantidade())))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
 
-
-    private static List<OrderItemModel> getOrderItems(OrderCreatedListener event) {
-        return event.itens().stream()
+    private static List<OrderItemModel> getOrderItems(OrderCreatedEvent event) {
+        return event.items().stream()
                 .map(i -> new OrderItemModel(i.produto(), i.quantidade(), i.preco()))
                 .toList();
     }
-
-
 }

@@ -28,7 +28,7 @@ public class OrderController {
     @GetMapping("/customers/{custumerId}/orders")
     public ResponseEntity<ApiResponse<OrderResponse>> listOrders(@PathVariable("customerId") Long customerId,
                                                                 @RequestParam(name = "page", defaultValue = "0") Integer page,
-                                                                @RequestParam(name = "pageSize" , defaultValue = "10") Integer pageSize{
+                                                                @RequestParam(name = "pageSize" , defaultValue = "10") Integer pageSize){
 
         var pageResponse = orderService.findAllbyCustomer(customerId, PageRequest.of(page, pageSize));
         var totalOnOrders = orderService.findTotalOnOrdersByCustomerId(customerId);
