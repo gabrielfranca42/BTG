@@ -1,11 +1,10 @@
 package btg.controller;
 
-
 import btg.controller.dto.ApiResponse;
 import btg.controller.dto.OrderResponse;
 import btg.controller.dto.PaginationResponse;
 import btg.service.OrderService;
-import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,15 +23,18 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @GetMapping("/customers/{customerId}/orders") // corrigi "custumerId" para "customerId"
+    public ResponseEntity<ApiResponse<OrderResponse>> listOrders(
+            @PathVariable("customerId") Long customerId,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
-    @GetMapping("/customers/{custumerId}/orders")
-    public ResponseEntity<ApiResponse<OrderResponse>> listOrders(@PathVariable("customerId") Long customerId,
-                                                                @RequestParam(name = "page", defaultValue = "0") Integer page,
-                                                                @RequestParam(name = "pageSize" , defaultValue = "10") Integer pageSize){
+        Page<OrderResponse> pageResponse = orderService.findAllByCustomerId(
+                customerId,
+                PageRequest.of(page, pageSize)
+        );
 
-        var pageResponse = orderService.findAllByCustomerId(customerId, PageRequest.of(page, pageSize));
         var totalOnOrders = orderService.findTotalOnOrdersByCustomerId(customerId);
-
 
         return ResponseEntity.ok(new ApiResponse<>(
                 Map.of("totalOnOrders", totalOnOrders),
@@ -41,3 +43,4 @@ public class OrderController {
         ));
     }
 }
+

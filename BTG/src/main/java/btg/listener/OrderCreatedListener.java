@@ -1,6 +1,6 @@
 package btg.listener;
 
-
+import btg.listener.dto.OrderCreatedEvent;
 import btg.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import static btg.config.RabbitMqConfig.ORDER_CREATED_QUEUE;
 public class OrderCreatedListener {
 
     private final Logger logger = LoggerFactory.getLogger(OrderCreatedListener.class);
-
     private final OrderService orderService;
 
     public OrderCreatedListener(OrderService orderService) {
@@ -22,9 +21,8 @@ public class OrderCreatedListener {
     }
 
     @RabbitListener(queues = ORDER_CREATED_QUEUE)
-    public void listen(Message<OrderCreatedListener> message){
+    public void listen(Message<OrderCreatedEvent> message) {
         logger.info("Message consumed: {}", message);
-
         orderService.save(message.getPayload());
     }
 }
